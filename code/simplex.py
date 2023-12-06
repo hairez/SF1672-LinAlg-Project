@@ -130,5 +130,6 @@ LPS = LPSolver(A,b,c)
 
 print(LPS.solve())
 print(x)
+#x contains what x_1, x_2, and x_3 should be set to.
 
 
