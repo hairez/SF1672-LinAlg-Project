@@ -21,8 +21,67 @@
 \date{December 2023}
 
 \begin{document}
-
 \maketitle
+\subsection{Bakgrund}
+I en värld med begränsade resurser är det väsentligt att nyttja dessa på ett optimalt sätt och minska svinnet. Denna verklighet påtvingar ett behov av att använda våra tillgångar – oavsett om det gäller tid, pengar, råmaterial eller energi – på det mest effektiva och hållbara sättet. Genom att sträva efter optimering kan vi maximera nytta och produktivitet samtidigt som vi minimerar slöseri och ineffektivitet. Att inte optimera innebär en risk för överanvändning och utarmning av värdefulla resurser, vilket kan leda till miljöförstöring och långsiktiga negativa konsekvenser för både människor och planeten.
+
+Bland de mest grundläggande behoven som vi människor har återfinner vi mat mot toppen av listan. Följaktligen är det en högst relevant fråga att försöka maximera den avkastning som bönderna får på sina grödor. Detta problem kan besvaras med hjälp av simplexmetoden, som är en populär algoritm inom linjärprogrammering.
+
+\subsection{Problemformulering}
+Hur kan en bonde bestämma den optimala mängden grödor att plantera för att maximera sin vinst samtidigt som hen minimerar arbetsbördan? Vi kommer presentera X olika exempel på hur en bonde kan använda sig av linjär algebra för att på ett optimalt sätt planera sitt jordbruk. 
+
+Detta problem är begränsat både ur ett kostnadsperspektiv, arbetstidsperspektiv och planteringsareas-perspektiv. Det vill säga, bonden kommer vilja maximera sina avkastning men ha i åtanke att minimera kostnaden och arbetstiden, samtidigt som de försöker använda hela planteringsarean.  %hur besrkiver man det här bra
+
+\subsection{simplexmetoden + svar}
+För att lösa optimeringsproblem av detta slag är det tacksamt att använda den s.k simplexmetoden. Den utgår ifrån att vi först formulerar problemet, dvs definiera den linjära funktionen att maximera eller minimera. Skriv ner linjära restriktioner som olikheter och sedan konvertera till standardform:
+
+Målet är att omvandla problemet till en standardform där alla olikheter är på formen $\leq$ och alla variabler är icke-negativa.
+Därefter Skapar en initial simplextabell med koefficienter från standardformen.
+
+Välj sedan den kolumn där koefficienten av den objektiva funktionen är mest negativ. Detta kallas pivotkolumnen. För varje rad beräknar du därefter kvoten av högerledet och motsvarande element i pivotkolumnen. Välj raden med minsta positiva kvot. Detta kallas pivotraden.
+Pivota:
+
+Gör elementet i pivotraden och pivotkolumnen till 1 genom att dela hela raden med pivotvärdet. Gör sedan alla andra element i pivotkolumnen till 0 genom att använda radoperationer så att bara det valda elementet blir 1. Uppdatera resten av tabellen baserat på pivotraden och pivotkolumnen.
+
+Fortsätt att välja pivotkolumn och pivotrad tills alla koefficienter i den objektiva funktionen inte är negativa och när alla koefficienter i den objektiva funktionen är icke-negativa, har vi nått en optimal lösning. 
+
+Ponera att vi har en bonde som vill plantera majs, vete och sojabönor på ett fält som är 1000 hektar. Han vet att vinsten på majs är 30 per hektar, vinsten på vete är 40 per hektar och vinsten på sojaböner är 20 per hektar. Till sitt förfogande har bonden 100 000 kr, och kostnaden av majs är 100 kr per hektar, 120 kr per hektar för vete och 70 kr per hektar för sojabönor. Slutligen vet vi att bonden har 8000 arbetsdagar, och att det tar 7 arbetsdagar att plantera en hektar majs, 10 för en hektar vete och 8 för en hektar sojabönor. Problemet kan formuleras som följande:
+
+Låt \( x_1 \) vara antalet hektar med majs.
+Låt \( x_2 \) vara antalet hektar med vete.
+Låt \( x_3 \) vara antalet hektar med sojabönor.
+Målet är att maximera den totala vinsten, vilket kan representeras som:
+\[
+\text{Maximera } Z = 30x_1 + 40x_2 + 20x_3
+\]
+
+Med följande begränsningar:
+
+Kostnadsbegränsning (för förberedelse): 
+\[ 100x_1 + 120x_2 + 70x_3 \leq 100,000 \]
+
+Begränsning av arbetsdagar: 
+\[ 7x_1 + 10x_2 + 8x_3 \leq 8000 \]
+
+Markbegränsning (eftersom bonden har 1000 hektar): 
+\[ x_1 + x_2 + x_3 \leq 1000 \]
+
+Icke-negativitetsbegränsningar: 
+\[ x_1, x_2, x_3 \geq 0 \]
+
+För att lösa detta sätter vi upp följande tablå:
+
+
+
+
+
+
+\subsection{Kod}
+
+\subsection{Diskussion}
+
+
+
 
 
 
