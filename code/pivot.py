@@ -3,7 +3,7 @@ inf = 2e9
 
 class LPSolver:
     
-    def pivot(rr,s):
+    def pivot(r,s):
         a = D[r][:]
         inv = 1/a[s]
         for i in range(m+2):
