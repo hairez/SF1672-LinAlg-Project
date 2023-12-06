@@ -3,6 +3,7 @@
 #which has its source from the Stanford Notebook
 
 #https://github.com/kth-competitive-programming/kactl/blob/81d547a917d05fd482ba2e55a3d1fb1e444af919/content/numerical/Simplex.h
+#Time: O(NM * \#pivots), where a pivot may be e.g. an edge relaxation. O(2^n) in the general case.
 
 eps = 1e-8
 inf = 2e9
