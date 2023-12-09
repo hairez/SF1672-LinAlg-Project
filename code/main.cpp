@@ -112,4 +112,15 @@ int main() {
     rep(i,0,sz(x)){
         cout << x[i] << "\n";
     }
+
+
+
+    A = {{100,200,50}, {5,12,11}, {1,1,1}};
+    b = {1e5,1e4,1e3}, c = {30,40,35};
+    x;
+    val = LPSolver(A, b, c).solve(x);
+    cout<< val << "\n";
+    rep(i,0,sz(x)){
+        cout << x[i] << "\n";
+    }
 }
