@@ -34,11 +34,11 @@ class LPSolver:
         self.D[self.m+1][self.n] = 1
     
     def pivot(self, r, s):
-        a = self.D[r][:]
+        a = self.D[r]
         inv = 1/a[s]
         for i in range(self.m+2):
-            if i != r and abs(self.D[i][s] > eps):
-                b = self.D[i][:]
+            if i != r and abs(self.D[i][s]) > eps:
+                b = self.D[i]
                 inv2 = b[s]*inv
 
                 for j in range(self.n+2):
@@ -79,7 +79,7 @@ class LPSolver:
             
             self.pivot(r,s)
     
-    def solve(self, x):
+    def solve(self):
         r = 0
         for i in range(1,self.m):
             if self.D[i][self.n+1] < self.D[r][self.n+1]:
@@ -97,11 +97,11 @@ class LPSolver:
                     self.pivot(i, s)
 
         ok = self.simplex(1)
+        global x 
         x = [0]*(self.n)
         for i in range(self.m):
             if self.B[i] < self.n:
                 x[self.B[i]] = self.D[i][self.n+1]
-        
         return self.D[self.m][self.n+1] if ok else inf
                 
 

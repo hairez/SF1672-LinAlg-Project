@@ -34,11 +34,11 @@ class LPSolver:
         self.D[self.m+1][self.n] = 1
     
     def pivot(self, r, s):
-        a = self.D[r][:]
+        a = self.D[r]
         inv = 1/a[s]
         for i in range(self.m+2):
-            if i != r and abs(self.D[i][s] > eps):
-                b = self.D[i][:]
+            if i != r and abs(self.D[i][s]) > eps:
+                b = self.D[i]
                 inv2 = b[s]*inv
 
                 for j in range(self.n+2):
@@ -123,7 +123,7 @@ A = [   [100,   120,    20]
 
 b = [   10**6,  8000,   1000]
 
-c = [   -30,    -40,    -20]
+#c = [   -30,    -40,    -20]
 c = [   30,    40,    20]
 
 
