@@ -53,13 +53,6 @@ struct LPSolver {
 			b[s] = a[s] * inv2;
 		}
 
-        rep(i,0,5){
-            rep(j,0,5){
-                cout << D[i][j] << " ";
-            }
-            cout << "\n";
-        }
-
 		rep(j,0,n+2) if (j != s) D[r][j] *= inv;
 		rep(i,0,m+2) if (i != r) D[i][s] *= -inv;
 		D[r][s] = inv;
@@ -68,19 +61,11 @@ struct LPSolver {
 
 	bool simplex(int phase) {
 		int x = m + phase - 1;
-        cout << x << " " << x <<"\n";
 		for (;;) {
 			int s = -1;
 			rep(j,0,n+1){
-                cout << N[j] << " " << -phase << "\n";
-                rep(z,0,5){
-                    cout <<D[x][z] <<  " ";
-                }
-                cout << "\n";
-
                 if (N[j] != -phase) ltj(D[x]);
             }
-            cout << s << " "<< x<< "\n";
 			if (D[x][s] >= -eps) return true;
 			int r = -1;
 			rep(i,0,m) {
