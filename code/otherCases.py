@@ -61,6 +61,9 @@ class LPSolver:
     def simplex(self, phase):
         x = self.m + phase -1
         while 1:
+            for row in self.D:
+                print("\t".join(map(str,row)))
+            print()
             s = -1
             for j in range(self.n+1):
                 if self.N[j] != -phase:
@@ -77,14 +80,19 @@ class LPSolver:
             if r ==-1:
                 return 0
             
+            print(r,s)
             self.pivot(r,s)
+            for row in self.D:
+                print("\t".join(map(str,row)))
+            print()
+
     
     def solve(self):
         r = 0
         for i in range(1,self.m):
             if self.D[i][self.n+1] < self.D[r][self.n+1]:
                 r = i
-        
+
         if self.D[r][self.n+1] < -eps:
             self.pivot(r,self.n)
             if (not self.simplex(2)) or self.D[self.m+1][self.n+1] < -eps:
@@ -149,5 +157,26 @@ c = [   30,    40,    35]
 LPS = LPSolver(A,b,c)
 print(A, b, c)
 print(LPS.solve())
+print(LPS.x)
+
+
+
+A = [   [100,   200,    50]
+    ,   [5,     12,     11]
+    ,   [1,     1,      1]
+    ,   [-1,    -1,     -1]]
+
+b = [   10**5,  10000,   1000, 0]
+
+
+c = [   30,    40,    35]
+
+
+LPS = LPSolver(A,b,c)
+print(A, b, c)
+print(LPS.solve())
+
+for row in LPS.D:
+    print("\t".join(map(str,row)))
 print(LPS.x)
 
