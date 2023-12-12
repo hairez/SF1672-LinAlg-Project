@@ -97,8 +97,8 @@ class LPSolver:
                     self.pivot(i, s)
 
         ok = self.simplex(1)
-        global x 
-        x = [0]*(self.n)
+        
+        x = self.x = [0]*(self.n)
         for i in range(self.m):
             if self.B[i] < self.n:
                 x[self.B[i]] = self.D[i][self.n+1]
@@ -130,7 +130,7 @@ c = [   30,    40,    20]
 LPS = LPSolver(A,b,c)
 
 print(LPS.solve())
-print(x)
+print(LPS.x)
 #x contains what x_1, x_2, and x_3 should be set to.
 
 
