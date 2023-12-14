@@ -2,6 +2,7 @@
 \usepackage{graphicx} % Required for inserting images
 
 \usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{bm} %bold math
 \usepackage{tikz}
 
 \usepackage[margin=1.25in]{geometry}
@@ -66,6 +67,32 @@ Den bakomliggande teorin för problemet är att alla begränsningar på parametr
 \caption{En polytop motsvarar lösningsmängden - en optimal lösning kommer alltid finnas i ett hörn.}
 \end{figure}
 
+\begin{tikzpicture}[scale=2]
+\coordinate (O) at (0,0);
+\coordinate (A1) at (0,3);
+\coordinate (A2) at (0.6,3.5);
+\coordinate (A3) at (1.6,3.3);
+\coordinate (A4) at (3.4,2.3);
+\coordinate (A5) at (4.3,0);
+
+\coordinate (L1) at (-0.15,5.85);
+\coordinate (L2) at (5.85,-0.15); % slope is -1
+
+\coordinate (P) at (2.85,2.85);
+\coordinate (Q) at (3.65,3.65);
+
+\draw[blue] (O) -- (A1) -- (A2) -- (A3) -- (A4) -- (A5) -- (O);
+\draw[red] (L1) node[above]{$Z(x)=c$} -- (L2);
+\draw[->] (P) -- (Q);
+\end{tikzpicture}
+
+\begin{align*}
+&\text{Maximera} \ Z(\bm{x}) := \bm{c}^T\bm{x} \\
+&\text{under begränsningarna} \ A\bm{x} \le \bm{b} \ \text{och} \ \bm{x} \ge 0.
+\end{align*}
+
+
+
 \section*{Stegen i Simplexmetoden}
 \begin{enumerate}
     \item \textbf{Formulera Problem:} Omvandla optimeringsproblemet till standardform, där alla begränsningar är likheter och målfunktionen är en maximeringsfunktion. Alla variabler måste vara större eller lika med noll.
@@ -93,3 +120,5 @@ Frågeställningen är därmed: Hur mycket av varje gröda ska vi köpa/plantera
 Möjliga tillämpningar av detta finns även i verkligheten, (då den heter bondens problem bokstavligt talat) då den återfinns på i princip alla bondgårdar/jordbruk när det kommer till att maximera avkastningen och effektiviteten givet vissa krav på produktionen. Med vårt program kommer vi ha med ett par av de vanligare kraven som man behöver ta hänsyn till men det finns givetvis flera variabler och begränsningar man skulle kunna lägga till.
 
 \end{document}
+
+
