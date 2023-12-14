@@ -160,6 +160,13 @@ print(LPS.solve())
 print(LPS.x)
 
 
+for row in LPS.D:
+    print("\t".join(map(str,row)))
+print(LPS.x)
+
+
+
+
 
 A = [   [100,   200,    50]
     ,   [5,     12,     11]
