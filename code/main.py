@@ -1,9 +1,12 @@
 
-#Code is based off KACTL's implementation of the Simplex algorithm
-#which has its source from the Stanford Notebook
+"""
+Code is based off KACTL's implementation of the Simplex algorithm
+which has its source from the Stanford Notebook
 
-#https://github.com/kth-competitive-programming/kactl/blob/81d547a917d05fd482ba2e55a3d1fb1e444af919/content/numerical/Simplex.h
-#Time: O(NM * \#pivots), where a pivot may be e.g. an edge relaxation. O(2^n) in the general case.
+https://github.com/kth-competitive-programming/kactl/blob/81d547a917d05fd482ba2e55a3d1fb1e444af919/
+content/numerical/Simplex.h
+Time: O(NM * \#pivots), where a pivot may be e.g. an edge relaxation. O(2^n) in the general case.
+"""
 
 eps = 1e-8
 inf = 2e9
@@ -13,7 +16,7 @@ class LPSolver:
 
         self.m = len(b)
         self.n = len(c)
-        self.N = [0]*(self.n+1) #array med längd n+1
+        self.N = [0]*(self.n+1)
         self.B = [0]*(self.m)
         self.D = [[0]*(self.n+2) for _ in range(self.m+2)]
 
@@ -109,12 +112,12 @@ class LPSolver:
 
 
 #We have the equations:
-#100x_1 + 120x_2 + 70x_3 <= 10**6   #Constraints on costs 
-#7x_1 + 10x_2 + 8x_3 <= 8000        #Constraint on man-days
+#100x_1 + 200x_2 + 50x_3 <= 10**5   #Constraints on costs 
+#5x_1 + 12x_2 + 11x_3 <= 10000        #Constraint on man-days
 #x_1 + x_2 + x_3 <= 1000            #Constraint on acres/area
 
 #We want to maximize:
-#max(30x_1 + 40x_2 + 20x_3)
+#max(30x_1 + 40x_2 + 35x_3)
 
 
 A = [   [100,   200,    50]
