@@ -1,139 +1,114 @@
+# based on https://github.com/j2kun/simplex-algorithm/blob/main/simplex.py
+import heapq
+import numpy as np
 
-"""
-Code is based off KACTL's implementation of the Simplex algorithm
-which has its source from the Stanford Notebook
+class SimplexLPSolver:
+   def __init__(self, c, A, b):
+      self.c = c
+      self.A = A
+      self.b = b
 
-https://github.com/kth-competitive-programming/kactl/blob/81d547a917d05fd482ba2e55a3d1fb1e444af919/
-content/numerical/Simplex.h
-Time: O(NM * \#pivots), where a pivot may be e.g. an edge relaxation. O(2^n) in the general case.
-"""
+   def maximize(self):
+      self.add_slack_variables()
+      self.initialize_simplex_tableau()
 
-eps = 1e-8
-inf = 2e9
+      print("Initial tableau:")
+      print(np.round(self.tableau))
 
-class LPSolver:
-    def __init__(self, A, b, c):
+      while self.can_improve():
+         pivot = self.find_pivot_index()
+         print("Next pivot index is=%d,%d \n" % pivot)
+         self.pivot_about(pivot)
+         print("Tableau after pivot:")
+         print(self.tableau)
+      
+      return self.tableau, self.primal_solution(), self.objective_value()
 
-        self.m = len(b)
-        self.n = len(c)
-        self.N = [0]*(self.n+1)
-        self.B = [0]*(self.m)
-        self.D = [[0]*(self.n+2) for _ in range(self.m+2)]
+   def add_slack_variables(self):
+      self.m, self.n = self.A.shape
+      self.A = np.concatenate((self.A, np.eye(self.m)), axis=1)
+      self.c = np.concatenate((self.c, np.zeros(self.m + 1))) # +1 since we store the objective function as well
 
-        for i in range(self.m):
-            for j in range(self.n):
-                self.D[i][j] = A[i][j]
-        
-        for i in range(self.m):
-            self.B[i]=self.n+i
-            self.D[i][self.n] = -1
-            self.D[i][self.n+1] = b[i]
-        
-        for j in range(self.n):
-            self.N[j] = j
-            self.D[self.m][j] = - c[j]
-        
-        self.N[self.n] = -1
-        self.D[self.m+1][self.n] = 1
-    
-    def pivot(self, r, s):
-        a = self.D[r]
-        inv = 1/a[s]
-        for i in range(self.m+2):
-            if i != r and abs(self.D[i][s]) > eps:
-                b = self.D[i]
-                inv2 = b[s]*inv
+   def initialize_simplex_tableau(self):
+      self.tableau = np.concatenate((self.A, self.b.reshape(-1,1)), axis=1)
+      self.tableau = np.concatenate((self.tableau, self.c.reshape(1,-1)), axis=0)
 
-                for j in range(self.n+2):
-                    b[j] -= a[j] * inv2
-                b[s] = a[s] * inv2
+   def can_improve(self):
+      lastRow = self.tableau[-1]
+      return any(map(lambda x : x > 0, lastRow[:-1]))
+   
+   def find_pivot_index(self):
+      # pick minimum positive index of the last row
+      column_choices = [(i,x) for (i,x) in enumerate(self.tableau[-1][:-1]) if x > 0]
+      column = min(column_choices, key=lambda a: a[1])[0]
 
+      # check if unbounded
+      if all(row[column] <= 0 for row in self.tableau):
+         raise Exception('Linear program is unbounded.')
 
-        for j in range(self.n+2):
-            if j != s: self.D[r][j] *= inv
-        for i in range(self.m+2):
-            if i != r: self.D[i][s] *= -inv
-        self.D[r][s] = inv
-        self.B[r], self.N[s] = self.N[s], self.B[r]
-    
-    def ltj(self, X, N, s, j):
-        if s == -1 or (X[j], N[j]) < (X[s], N[s]):
-            return j
-        return s
-    
-    def simplex(self, phase):
-        x = self.m + phase -1
-        while 1:
-            s = -1
-            for j in range(self.n+1):
-                if self.N[j] != -phase:
-                    s = self.ltj(self.D[x], self.N, s, j)
-            if self.D[x][s] >= -eps:return 1
+      # check for degeneracy: more than one minimizer of the quotient
+      quotients = [(i, r[-1] / r[column])
+         for i,r in enumerate(self.tableau[:-1]) if r[column] > 0]
 
-            r = -1
-            for i in range(self.m):
-                if self.D[i][s] <= eps:
-                    continue
-                if r == -1 or (self.D[i][self.n+1]/self.D[i][s], self.B[i]) < (self.D[r][self.n+1]/self.D[r][s], self.B[r]):
-                    r = i
+      if self.more_than_one_min(quotients):
+         raise Exception('Linear program is degenerate.')
 
-            if r ==-1:
-                return 0
-            
-            self.pivot(r,s)
-    
-    def solve(self):
-        r = 0
-        for i in range(1,self.m):
-            if self.D[i][self.n+1] < self.D[r][self.n+1]:
-                r = i
-        
-        if self.D[r][self.n+1] < -eps:
-            self.pivot(r,self.n)
-            if (not self.simplex(2)) or self.D[self.m+1][self.n+1] < -eps:
-                return -inf
-            for i in range(self.m):
-                if self.B[i] == -1:
-                    s = 0
-                    for j in range(1,self.n+1):
-                        s = self.ltj(self.D[i], self.N, s, j)
-                    self.pivot(i, s)
+      # pick row index minimizing the quotient
+      row = min(quotients, key=lambda x: x[1])[0]
 
-        ok = self.simplex(1)
-        
-        x = self.x = [0]*(self.n)
-        for i in range(self.m):
-            if self.B[i] < self.n:
-                x[self.B[i]] = self.D[i][self.n+1]
-        return self.D[self.m][self.n+1] if ok else inf
-                
+      return row, column
+   
+   def more_than_one_min(self, L):
+      if len(L) <= 1:
+         return False
 
+      x,y = heapq.nsmallest(2, L, key=lambda x: x[1])
+      return x == y
+   
+   def pivot_about(self, pivot):
+      i,j = pivot
 
+      pivotDenom = self.tableau[i][j]
+      self.tableau[i] = [x / pivotDenom for x in self.tableau[i]]
 
+      for k,row in enumerate(self.tableau):
+         if k != i:
+            pivotRowMultiple = [y * self.tableau[k][j] for y in self.tableau[i]]
+            self.tableau[k] = [x - y for x,y in zip(self.tableau[k], pivotRowMultiple)]
 
-#We have the equations:
-#100x_1 + 200x_2 + 50x_3 <= 10**5   #Constraints on costs 
-#5x_1 + 12x_2 + 11x_3 <= 10000        #Constraint on man-days
-#x_1 + x_2 + x_3 <= 1000            #Constraint on acres/area
+   def primal_solution(self):
+      # the pivot columns denote which variables are used
+      columns = np.transpose(self.tableau)
+      indices = [j for j, col in enumerate(columns[:-1]) if self.is_pivot_col(col)]
+      return [(colIndex, self.variable_value_for_pivot_column(self.tableau, columns[colIndex]))
+               for colIndex in indices]
+   
+   def is_pivot_col(self, col):
+      return (len([c for c in col if c == 0]) == len(col) - 1) and sum(col) == 1
 
-#We want to maximize:
-#max(30x_1 + 40x_2 + 35x_3)
+   def variable_value_for_pivot_column(self, tableau, column):
+      pivotRow = [i for (i, x) in enumerate(column) if x == 1][0]
+      return tableau[pivotRow][-1]
+   
+   def objective_value(self):
+      return -self.tableau[-1][-1]
 
+if __name__ == "__main__":
+   np.set_printoptions(precision=2)
 
-A = [   [100,   200,    50]
-    ,   [5,     12,     11]
-    ,   [1,     1,      1]]
+   A = np.array([[100,   200,    50]
+   ,    [5,     12,     11]
+   ,    [1,     1,      1]])
 
-b = [   10**5,  10000,   1000]
+   b = np.array([   10**5,  10000,   1000])
 
+   c = np.array([   30,    40,    35])
 
-c = [   30,    40,    35]
+   solver = SimplexLPSolver(c, A, b)
 
-
-LPS = LPSolver(A,b,c)
-
-print(LPS.solve())
-print(LPS.x)
-#x contains what x_1, x_2, and x_3 should be set to.
-
-
+   tableau, solution, obj = solver.maximize()
+   print("Final tableau:")
+   print(tableau)
+   print("Solution: ", solution)
+   print("Objective: ", obj)
+   
